@@ -50,7 +50,7 @@ class Prison{
         //for public attributes--> prisoners[id].name=xyz;
         //for private attributes--> prisoners[id].setId(x);
         // for cell assignment use for loop for cells[51] arrray and keep calling the setOccupant() fun, if occupant is placed in a cell then store that index in int prisonerCell attribute
-        // for block assignment ask user to choose  A,B,C or D and then assign it to prisonerBlock which is an enum type
+        // for block assignment (if cell of prisoner is from 1-20 set A, if 20-30 set B,if 30-40 set C,40-50 set D) and then assign it to prisonerBlock which is an enum type
         //retturn to mainmenu by calling mainmenu()
     }
     void releasePrisoner(){
@@ -75,6 +75,15 @@ class Prison{
         //iterate over isPrisoneridTaken[] array to check if prisoner exist at that id or not, if yes print his details in a good format
         // if not say prisoner at that id doesnot exist
         // ask wanna search another id or wanna move back to mainmenu
+        //retturn to mainmenu by calling mainmenu()
+    }
+
+    void cellAndBlockAssignment(){
+        //ask for prisoner id
+        //print his cell and block
+        //ask if user wanna change cell or  block
+        //if user wanna change cell ask for which cell(1-50) then check if its empty or not by calling setOccupant(id), if empty then set the prisoner onto that and change the block accordingly
+        //if user wanna change block instead, then ask which block(A,B,C or D) and then check the cells in that block, and add the rpsioner into any empty cell, if block is full ask for another block
         //retturn to mainmenu by calling mainmenu()
     }
 };
@@ -105,10 +114,11 @@ class Prisoner:public Person{
 int Prisoner::numOfPrisoners = 0;
 
 //each prisoner will be assigned a block
+//for block assignment (if cell of prisoner is from 1-20 set A, if 20-30 set B,if 30-40 set C,40-50 set D) and then assign it to prisonerBlock
 enum Block{
     A=1,B,C,D
 };
-//each prisoner will be assigned a cell in Prison class
+//each prisoner will be assigned a cell in Prison class(cells are from 1-50)
 class Cell{
     int occupant1 = 0;
     int occupant2 = 0;
@@ -116,9 +126,11 @@ class Cell{
     void setOccupant(int id){
         if(occupant1==0){
             occupant1 = id;
+            cout<<"cell has been assigned to occupant"<<endl;
         }
         else if(occupant2 == 0){
             occupant2 = id;
+            cout<<"cell has been assigned to occupant"<<endl;
         }
         else{
             cout<<"The cell is full, Try another"<<endl;
