@@ -15,32 +15,97 @@ class Prison{
     Cell cells[51]; //we can go from 1 to 50(ignore 0) and can accomodate 100 prisoner
 
     public:
-    void mainMenu(){
-        /*  says welcome
-            prints the number of prisoner(other staff will be added later)
-            then the following menu;
-            1.Prisoner record management (Add, Edit, Search, Release)
-            2.Cell and block assignment
-            3.Guard schedule management
-            4.Visitor management
-            5.Search prisoner by ID
-            6.exit
-
-            then call the relevant functions currently  only prionser record management will be made
-*/
+    void mainMenu()
+  {
+    cout << "Welcome!" << endl;
+    int count = 0, choice;
+    for (int i = 1; i < 101; i++)
+    {
+      if (isPrisonerIdTaken[i] == true)
+      {
+        count++;
+      }
+      else
+      {
+        break;
+      }
     }
-    void prisonerRecordManagement(){
-        /*
-            print menu;
-            1.add prisoner
-            2.release prisoner
-            3.modify prisoner data
-            4. search for a prisoner
-            5. return to mainmenu
+    cout << "The prison have " << count << " prisoners." << endl;
+    cout << "Menu: \n1.Prisoner record management(Add, Edit, Search, Release) \n2.Cell and block assignment \n3.Guard schedule management \n4.Visitor management \n5.Search prisoner by ID \n6.exit" << endl;
 
-            then just call the relevant functions givem below
-            */
+    do
+    {
+      cout << "Choose any of the options (1-6): ";
+      cin >> choice;
+    } while (choice <= 0 || choice > 6);
+    switch (choice)
+    {
+    case 1:
+      prisonerRecordManagement();
+      break;
+
+    case 2:
+      cellAndBlockAssignment();
+      break;
+
+    case 3:
+      // GuardScheduleManagement();
+      break;
+
+    case 4:
+      // VisitorManagement();
+      break;
+
+    case 5:
+      searchPrisoner();
+      break;
+
+    case 6:
+      // Exit
+      break;
+
+    default:
+      break;
     }
+  }
+  void prisonerRecordManagement()
+  {
+    int choice;
+    cout << "\nPrisoner Record Management: " << endl;
+    cout << "Choose any of them: " << endl;
+    cout << "1.add prisoner \n2.release prisoner \n3.modify prisoner data \n4. search for a prisoner \n5. return to mainmenu" << endl;
+    do
+    {
+      cout << "Choose any of the options (1-5): ";
+      cin >> choice;
+    } while (choice <= 0 || choice > 5);
+
+    switch (choice)
+    {
+    case 1:
+      addPrisoner();
+      break;
+
+    case 2:
+      releasePrisoner();
+      break;
+
+    case 3:
+      modifyPrisonerData();
+      break;
+
+    case 4:
+      searchPrisoner();
+      break;
+
+    case 5:
+      mainMenu();
+      break;
+
+    default:
+      break;
+    }
+  }
     void addPrisoner(){
         //ask for all  input, make sure to add input validations
         //id should be greater than 0 and less than 100 as thats then capacity of prisoners currently
