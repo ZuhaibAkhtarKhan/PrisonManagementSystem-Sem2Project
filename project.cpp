@@ -250,7 +250,7 @@ class Prison{
             }
         }while(runAgain);
     }
-    void modifyPrisonerData(){
+
 void modifyPrisonerData(){
     int id;
     cout << "Enter the ID of the prisoner you want to modify: ";
