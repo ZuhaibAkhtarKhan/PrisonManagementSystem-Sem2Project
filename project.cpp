@@ -251,15 +251,93 @@ class Prison{
         }while(runAgain);
     }
     void modifyPrisonerData(){
-        //show menu of data to choose what they wannna change
-        /*  do not change cell or block here, there will be a separate section for that
-            1.name 
-            2.id 
-            and so on
-            at  last n.return to prisoner menu i.e prisonerRecordManagement()
-        */
-        //after choosing ask for  that newdata and change it accordingly
-        //retturn to mainmenu by calling mainmenu()
+void modifyPrisonerData(){
+    int id;
+    cout << "Enter the ID of the prisoner you want to modify: ";
+    cin >> id;
+    if(intCheck() == false) return;
+
+    if (!isPrisonerIdTaken[id]) {
+        cout << "No prisoner exists with this ID.\n";
+        return;
+    }
+
+    int choice;
+    do {
+        cout << "\nWhat do you want to modify?\n";
+        cout << "1. Name\n";
+        cout << "2. Age\n";
+        cout << "3. ID\n";
+        cout << "4. Sentence Duration\n";
+        cout << "5. Crime\n";
+        cout << "6. Date of Arrest\n";
+        cout << "7. Return to Prisoner Menu\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        if(intCheck() == false) continue;
+
+        switch (choice) {
+            case 1: {
+                cout << "Enter new name: ";
+                cin >> prisoners[id].name;
+                cout << "Name updated.\n";
+                break;
+            }
+            case 2: {
+                cout << "Enter new age: ";
+                cin >> prisoners[id].age;
+                if (intCheck())
+                    cout << "Age updated.\n";
+                break;
+            }
+            case 3: {
+                int newId;
+                cout << "Enter new ID (1-100): ";
+                cin >> newId;
+                if (intCheck() && newId >= 1 && newId <= 100 && !isPrisonerIdTaken[newId]) {
+                    prisoners[newId] = prisoners[id];  // Copy data
+                    isPrisonerIdTaken[newId] = true;
+                    isPrisonerIdTaken[id] = false;
+                    id = newId; // update the current working ID
+                    cout << "ID updated successfully.\n";
+                } else {
+                    cout << "Invalid or already taken ID. Try again.\n";
+                }
+                break;
+            }
+            case 4: {
+                int newSentence;
+                cout << "Enter new sentence duration (in years): ";
+                cin >> newSentence;
+                if (intCheck()) {
+                    prisoners[id].sentence = newSentence;
+                    cout << "Sentence updated.\n";
+                }
+                break;
+            }
+            case 5: {
+                cout << "Enter new crime: ";
+                cin >> prisoners[id].crime;
+                cout << "Crime updated.\n";
+                break;
+            }
+            case 6: {
+                cout << "Enter new date of arrest: ";
+                cin >> prisoners[id].dateOfArrest;
+                cout << "Date of arrest updated.\n";
+                break;
+            }
+            case 7: {
+                prisonerRecordManagement(); // Return to prisoner menu
+                return;
+            }
+            default:
+                cout << "Invalid choice. Try again.\n";
+                break;
+        }
+    } while (true);
+}
+
     }
     void searchPrisoner(){
         bool runAgain;
