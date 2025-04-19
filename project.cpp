@@ -12,6 +12,27 @@ string toLower(string s) {
     transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }
+
+// checks if a name is valid or not
+bool stringcheck(string &value)
+{   
+    // Check if string is empty
+    if (value.empty())
+    {
+        return false;
+    }else{
+        // Check each character if only one is integer, return false
+        for (char x : value)
+        {
+            if (isdigit(x))
+            {
+                return false;
+            }
+        } //if false not returned means name is valid
+        return true;
+    }
+}
+
 bool checkcell;
 
 class Person{
@@ -101,7 +122,7 @@ class Prison{
                 switch (option)
                 {
                 case 1:
-                    // prisonerRecordManagement();
+                    prisonerRecordManagement();
                     break;
                 case 2:
                     cellAndBlockAssignment();
@@ -116,7 +137,10 @@ class Prison{
                     searchPrisoner();
                     break;
                 case 6:
-                    exit(0);
+                    for(int i=1;i<=100;i++){ //release the dynamically allocated memory
+                        delete[] prisoners[i].visitorHistory;
+                    }
+                    exit(0); //end whole program
                     break;
                 
                 default:
@@ -127,37 +151,34 @@ class Prison{
         
     }
     void prisonerRecordManagement(){
-        int select;
-        cout<<"Select one option"<<endl;
-        cout<<"Menu"<<endl;
-         cout<<"1.add prisoner"<<endl
-            <<"2.release prisoner"<<endl
-            <<"3.modify prisoner data"<<endl
-           <<"4. search for a prisoner"<<endl
-            <<"5. return to mainmenu"<<endl;
-
-           cin>>select;
-           switch(select){
-           	case 1:
-           		addPrisoner();
-           		break;
-            case 2:
-            	releasePrisoner();
-            	break;
-            case 3:
-				 modifyPrisonerData();
-				 break;
-			case 4:
-				searchPrisoner();
-				break;
-			case 5:
-				mainMenu();
-				break;
-			default:
-				cout<<"Invalid input"<<endl;
-				break;
-				 	
-		   }
+        int tempotion;
+        while (true)
+        {  
+            cout<<"Choose one option"<<endl;
+            cout<<"1.Add prisoner\n2.Release prisoner\n3.Modify Prisoner Data\n4.Search prisoner\n5.Go back"<<endl;
+            cin>>tempotion;
+            switch(tempotion){
+                case 1:
+                    addPrisoner();
+                    break;
+                case 2:
+                    releasePrisoner();
+                    break;
+                case 3:
+                    modifyPrisonerData();
+                    break;
+                case 4:
+                    searchPrisoner();
+                    break;
+                case 5:
+                    mainMenu();
+                    break;
+                default:
+                    cout<<"Invalid input"<<endl;
+                    break;        
+            }
+        }
+        
     }
     void addPrisoner(){
         //ask for all  input, make sure to add input validations
@@ -238,11 +259,10 @@ class Prison{
         bool runAgain; // for dealing with while loop
         do{
             runAgain=false; //by default its false
-            cout<<"Enter the ID of prisoner to be removed: "<<endl;
+            cout<<"Enter the ID of prisoner to be removed(1-100): "<<endl;
             int tempId;
             cin>>tempId;
-            if(intCheck() == false){   //this checks if other than integer type is enetered
-                cout<<"Enter only integers. "<<endl;
+            if(intCheck() == false || tempId<1 || tempId>100){   //this checks if other than integer type is enetered
                 runAgain=true;
                 continue;
             }else{
@@ -259,102 +279,107 @@ class Prison{
             }
         }while(runAgain);
     }
-void modifyPrisonerData(){
-    int id;
-    cout << "Enter the ID of the prisoner you want to modify: ";
-    cin >> id;
-    if(intCheck() == false) return;
-
-    if (!isPrisonerIdTaken[id]) {
-        cout << "No prisoner exists with this ID.\n";
-        return;
-    }
-
-    int choice;
-    do {
-        cout << "\nWhat do you want to modify?\n";
-        cout << "1. Name\n";
-        cout << "2. Age\n";
-        cout << "3. ID\n";
-        cout << "4. Sentence Duration\n";
-        cout << "5. Crime\n";
-        cout << "6. Date of Arrest\n";
-        cout << "7. Return to Prisoner Menu\n";
-        cout << "Enter choice: ";
-        cin >> choice;
-        if(intCheck() == false) continue;
-
-        switch (choice) {
-            case 1: {
-                cout << "Enter new name: ";
-                cin >> prisoners[id].name;
-                cout << "Name updated.\n";
-                break;
+    void modifyPrisonerData(){
+        int tempid;
+        while (true)
+        {
+            cout << "Enter the ID of the prisoner you want to modify(or enter 0 to go back): ";
+            cin >> tempid;
+            if(intCheck() == false || tempid<1 || tempid>100){
+                if(tempid==0){
+                    return;
+                }else{continue;}
             }
-            case 2: {
-                cout << "Enter new age: ";
-                cin >> prisoners[id].age;
-                if (intCheck())
-                    cout << "Age updated.\n";
-                break;
-            }
-            case 3: {
-                int newId;
-                cout << "Enter new ID (1-100): ";
-                cin >> newId;
-                if (intCheck() && newId >= 1 && newId <= 100 && !isPrisonerIdTaken[newId]) {
-                    prisoners[newId] = prisoners[id];  // Copy data
-                    isPrisonerIdTaken[newId] = true;
-                    isPrisonerIdTaken[id] = false;
-                    id = newId; // update the current working ID
-                    cout << "ID updated successfully.\n";
-                } else {
-                    cout << "Invalid or already taken ID. Try again.\n";
-                }
-                break;
-            }
-            case 4: {
-                int newSentence;
-                cout << "Enter new sentence duration (in years): ";
-                cin >> newSentence;
-                if (intCheck()) {
-                    prisoners[id].sentence = newSentence;
-                    cout << "Sentence updated.\n";
-                }
-                break;
-            }
-            case 5: {
-                cout << "Enter new crime: ";
-                cin >> prisoners[id].crime;
-                cout << "Crime updated.\n";
-                break;
-            }
-            case 6: {
-                cout << "Enter new date of arrest: ";
-                cin >> prisoners[id].dateOfArrest;
-                cout << "Date of arrest updated.\n";
-                break;
-            }
-            case 7: {
-                prisonerRecordManagement(); // Return to prisoner menu
-                return;
-            }
-            default:
-                cout << "Invalid choice. Try again.\n";
-                break;
+            else if(!isPrisonerIdTaken[tempid]) {
+                cout << "No prisoner exists with this ID."<<endl;
+                continue;
+            }else{break;}
         }
-    } while (true);
-}
+        
+        int choice;
+        do {
+            cout << "\nWhat do you want to modify?\n";
+            cout << "1. Name\n";
+            cout << "2. Age\n";
+            cout << "3. Sentence Duration\n";
+            cout << "4. Crime\n";
+            cout << "5. Date of Arrest\n";
+            cout << "6. Go back\n";
+            cout << "Enter choice: ";
+            cin >> choice;
+            if(intCheck() == false) continue;
+
+            switch (choice) {
+                case 1: {
+                    cout << "Enter new name: ";
+                    string tempname;
+                    cin.ignore();
+                    getline(cin,tempname);
+                    if(stringcheck(tempname)==false){
+                        cout<<"Name should not be empty and should not contain integers."<<endl;
+                        continue;
+                    }else{
+                        prisoners[tempid].name = tempname;
+                        cout << "Name updated.\n";
+                    }
+                    break;
+                }
+                case 2: {
+                    cout << "Enter new age: ";
+                    int tempage;
+                    cin >> tempage;
+                    if (intCheck()==false || tempage<1 || tempage>100){
+                        cout<<"Invalid age entered."<<endl;
+                        continue;
+                    }else{
+                        prisoners[tempid].age=tempage;
+                        cout<<"Age updated"<<endl;
+                    }
+                    break;
+                }
+                case 3: {
+                    int newSentence;
+                    cout << "Enter new sentence duration (in years): ";
+                    cin >> newSentence;
+                    if (intCheck()==false) {
+                        continue;
+                    }else{
+                        prisoners[tempid].sentence = newSentence;
+                        cout << "Sentence updated.\n";
+                    }
+                    break;
+                }
+                case 4: {
+                    cout << "Update crime: ";
+                    cin >> prisoners[tempid].crime;
+                    cout << "Crime updated.\n";
+                    break;
+                }
+                case 5: {
+                    cout << "Update date of arrest(eg; 12 April 2022): ";
+                    cin >> prisoners[tempid].dateOfArrest;
+                    cout << "Date of arrest updated.\n";
+                    break;
+                }
+                case 6: {
+                    return;
+                    break;
+                }
+                default:
+                    cout << "Invalid choice. Try again.\n";
+                    break;
+            }
+        } while (true);
+    }
 
     void searchPrisoner(){
         bool runAgain;
         do{
             runAgain=false;
-            cout<<"ENter the ID of prisoner: "<<endl;
+            cout<<"ENter the ID of prisoner(1-100): "<<endl;
             int tempId;
             cin>>tempId;
-            if(intCheck()==false){
-                cout<<"Invalid ID entered, please try only integers. "<<endl;
+            if(intCheck()==false || tempId<1 || tempId>100){
                 runAgain=true;
                 continue;
             }else{
