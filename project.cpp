@@ -12,8 +12,8 @@ string toLower(string s) {
     transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }
+bool checkcell;
 
-bool checkcell = false;
 class Person{
     public:
     string name;
@@ -29,6 +29,8 @@ enum Block{
 class Prisoner:public Person{
     private:
     int sentence;
+    int visits=0;
+    string *visitorHistory = new string[visits];
 
     public:
     friend class Prison;
@@ -71,6 +73,14 @@ class Cell{
 };
 
 
+//VISITOR CLASS DERIVED FROM PERSON
+// class Visitor:public Person{
+//     string date;
+//     string time;
+//     string relation;
+// };
+
+
 
 class Prison{
     bool isPrisonerIdTaken[101]={false}; //set the value to true at index equal to id of prisoner when a prisoner is being added
@@ -100,7 +110,7 @@ class Prison{
                     // guardScheduleManagement();
                     break;
                 case 4:
-                    // visitorManagment();
+                    visitorManagment();
                     break;
                 case 5:
                     // searchPrisoner();
@@ -390,12 +400,114 @@ void modifyPrisonerData(){
         //if user wanna change block instead, then ask which block(A,B,C or D) and then check the cells in that block, and add the rpsioner into any empty cell, if block is full ask for another block
         //retturn to mainmenu by calling mainmenu()
     }
+
+
+    void visitorManagment(){
+        cout<<"Welcome to Visitor Management: "<<endl;
+        cout<<"1.See visits history.\n2.Add new visitor's info.\n3.Go back."<<endl;
+        int tempoption;
+        //input validation
+        while(true){
+            cout<<"Enter option(1-3): ";
+            cin>>tempoption;
+            if(intCheck()==false || tempoption<1 && tempoption>3){
+                continue;
+            }else{break;}
+        }
+        switch(tempoption)
+        {
+        case 1:
+            showVisitorHistory();
+            break;
+        case 2:
+            addVisitorInfo(); 
+            break;  
+        case 3:
+            return;//back to previous function
+            break;  
+        default:
+            cout<<"default error"<<endl;
+            break;
+        }
+
+    }
+    void showVisitorHistory(){
+        int tempid;
+        while(true){
+            cout<<"Enter ID of prisoner(1-100): ";
+            cin>>tempid;
+            if(intCheck()==false || tempid<1 && tempid>100){
+                continue;
+            }else{break;}
+        }
+        if(isPrisonerIdTaken[tempid]==true){
+            for(int i=0;i<prisoners[tempid].visits;i++){
+            cout<<prisoners[tempid].visitorHistory[i]<<endl;
+            }
+        }else{
+            cout<<"SORRY, Prisoner with that ID doesnot Exist."<<endl;
+        }
+        
+    }
+    void addVisitorInfo(){
+        int prisonerTempid;
+        while (true){
+            cout<<"Enter the prisoner's ID (the one who met the visitor): ";
+            cin>>prisonerTempid;
+            if(intCheck()==false || prisonerTempid<1 && prisonerTempid>100){
+                continue;
+            }else{break;}
+        }
+        if(isPrisonerIdTaken[prisonerTempid]==true){
+            string tempname;
+            string tempdate;
+            string relation;
+            int visitortempid;
+
+            cout<<"Enter the visitor's Name: ";
+            cin.ignore();
+            getline(cin,tempname);
+            cout<<"Enter the Date of visit: ";
+            cin.ignore();
+            getline(cin,tempdate);
+            while(true){
+                cout<<"Enter the visitor's iD: ";
+                cin>>visitortempid;
+                if(intCheck()==false){
+                    continue;
+                }else{break;}
+            }
+            
+            cout<<"Enter the visitor's relationship with prisoner: ";
+            cin.ignore();
+            getline(cin,relation);
+
+            //storing visiotr's data
+            prisoners[prisonerTempid].visits++;
+            int newArraySize = prisoners[prisonerTempid].visits;
+            string *temphistory = new string[newArraySize];
+            for(int i=0;i<newArraySize-1;i++){
+                temphistory[i] = prisoners[prisonerTempid].visitorHistory[i];
+
+            }
+            delete[] prisoners[prisonerTempid].visitorHistory;
+            prisoners[prisonerTempid].visitorHistory = temphistory;
+            delete[] temphistory;
+            prisoners[prisonerTempid].visitorHistory[newArraySize-1]= tempname+" {ID = "+to_string(visitortempid)+"} visited "+prisoners[prisonerTempid].name+" {relation = "+relation+"} on "+tempdate;
+            cout<<"Thank you, visitor's information added."<<endl;
+        }
+        else{
+            cout<<"SORRY, Prisoner with that ID doesnot exist."<<endl;
+        }
+        
+    
+    }
 };
 
 
 int main(){
     Prison prison;
-    // prison.mainMenu();   starts from here and then goes from function to function
+    prison.mainMenu();   //starts from here and then goes from function to function
 
 
     
