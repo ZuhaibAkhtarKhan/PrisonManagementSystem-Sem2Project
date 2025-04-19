@@ -2,38 +2,12 @@
 #include<algorithm>
 using namespace std;
 
-/*write it after taking an integer type input such as
-    cin>>num;
-    intcheck();
-    but you have to run a do while loop to keep asking for a correct input
-*/
+
+// SOME USEFULL FUNCTIONS USED THROUGHOUT PROGRAM
 bool intCheck(); //defined below main used for integer type input validation, program wont crash if user enters alphabets instead of numbers
-string toLower(string s) {
-    transform(s.begin(), s.end(), s.begin(), ::tolower);
-    return s;
-}
+string toLower(string s); //converts capital to lower
+bool stringcheck(string &value); // checks if a name is valid or not (if name has integers then its invalid)
 
-// checks if a name is valid or not
-bool stringcheck(string &value)
-{   
-    // Check if string is empty
-    if (value.empty())
-    {
-        return false;
-    }else{
-        // Check each character if only one is integer, return false
-        for (char x : value)
-        {
-            if (isdigit(x))
-            {
-                return false;
-            }
-        } //if false not returned means name is valid
-        return true;
-    }
-}
-
-bool checkcell;
 
 class Person{
     public:
@@ -44,9 +18,37 @@ class Person{
     
 };
 
+//for block assignment (if cell of prisoner is from 1-20 set A, if 20-30 set B,if 30-40 set C,40-50 set D) and then assign it to prisonerBlock
 enum Block{
     A=1,B,C,D
 };
+
+//an array of Cell with size 50 has been initialised in Prison class
+class Cell{
+    //each cell can accomodate 2 prisoners in below variables
+    int occupant1 = 0;
+    int occupant2 = 0;
+    public:
+    friend class Prison;
+    //this function asssigns cell to a prsioner and returns true if empty cell is available, or false if no cell is empty
+    bool setOccupant(int id){
+        if(occupant1==0){
+            occupant1 = id; //occupant1 got assigned
+            cout<<"cell has been assigned to occupant"<<endl;
+            return true;
+        }
+        else if(occupant2 == 0){
+            occupant2 = id; //occupant2 got assigned
+            cout<<"cell has been assigned to occupant"<<endl;
+            return true;
+        }
+        else{
+            cout<<"The cell is full, Try another"<<endl;
+            return false;
+        }
+    }
+};
+
 class Prisoner:public Person{
     private:
     int sentence;
@@ -60,52 +62,16 @@ class Prisoner:public Person{
     int prisonerCell;
     Block prisonerBlock;
     string dateOfArrest;
-    void setSentence(int sentence){};
-    void setId(int id){};
-    void changeSentence(int newSentence){}
-    void changeId(int newId){}
+    void setSentence(int sentence){this->sentence=sentence;}
+    void setId(int id){this->id=id;}
 };
-int Prisoner::numOfPrisoners = 0;
-
-//each prisoner will be assigned a block
-//for block assignment (if cell of prisoner is from 1-20 set A, if 20-30 set B,if 30-40 set C,40-50 set D) and then assign it to prisonerBlock
-
-//each prisoner will be assigned a cell in Prison class(cells are from 1-50)
-class Cell{
-    int occupant1 = 0;
-    int occupant2 = 0;
-    public:
-    bool setOccupant(int id){
-        if(occupant1==0){
-            occupant1 = id;
-            cout<<"cell has been assigned to occupant"<<endl;
-            return true;
-        }
-        else if(occupant2 == 0){
-            occupant2 = id;
-            cout<<"cell has been assigned to occupant"<<endl;
-            return true;
-        }
-        else{
-            cout<<"The cell is full, Try another"<<endl;
-            return false;
-        }
-    }
-};
-
-
-//VISITOR CLASS DERIVED FROM PERSON
-// class Visitor:public Person{
-//     string date;
-//     string time;
-//     string relation;
-// };
+int Prisoner::numOfPrisoners = 0; //initialise total number of prisoners with 0
 
 
 
 class Prison{
     bool isPrisonerIdTaken[101]={false}; //set the value to true at index equal to id of prisoner when a prisoner is being added
-    Prisoner prisoners[101]; 
+    Prisoner prisoners[101];  //ignore index 0, and we can accomodate 100 prisoner
     Cell cells[51]; //we can go from 1 to 50(ignore 0) and can accomodate 100 prisoner
 
     public:
@@ -181,78 +147,116 @@ class Prison{
         
     }
     void addPrisoner(){
-        //ask for all  input, make sure to add input validations
-        int id;
-       bool check = false;
-       while(!check)
-       {
-       	cout<<"Enter Prisoner's id: ";
-       	cin>>id;
-       	if(id>0 && id<=100)
-      	{
-      		check = true;
-		  }
-	    else
-	    cout<<"Invalid id"<<endl;
-		   
-	   }
-      
-        for(int i=0;i<101;i++)
+        //getting ID first
+        int tempid;
+        while (true)
         {
-        	if (isPrisonerIdTaken[id]== false)
-        	{
-        		isPrisonerIdTaken[id] = true;
-        		break;
-			}
-			else{
-				cout<<"This id is already taken. Please enter a different id"<<endl;
-				cin>>id;
-			}
-		}
-		cout<<"Enter name of the prisoner: ";
-		cin>>prisoners[id].name;
-		
-		cout<<"Enter age of the prisoner: ";
-		cin>>prisoners[id].age;
-
-        //for private attributes--> prisoners[id].setId(x);
-        
-        Cell cell; //dont need this
-        for(int i=1;i<51;i++)
-        {
-        	cell.setOccupant(id);
-        	if(checkcell == true)
-        	{
-        		prisoners[id].prisonerCell = i;
-        		break;
-			}
-            /*instead of above code 
-            use if(cells[i].setOccupant(id)==true){
-                    prisoners[id].prisonerCell = i;
+            cout<<"ENter Prisoner's ID(1-100): ";
+            cin>>tempid;
+            if(intCheck()==false || tempid<1 || tempid>100){  //intcheck() returns false if input was other than integer
+                continue;
+            }else{
+                if(isPrisonerIdTaken[tempid]==true){
+                    cout<<"Prisoner with this ID already exists."<<endl;
+                    continue;
+                }else{
+                    isPrisonerIdTaken[tempid]=true;
+                    prisoners[tempid].id=tempid;
+                    break;
                 }
-                as i chnaged the setOccuppant() to directly return true or false so u dont need extra variable
-            */
+            }
+        }
 
-		}
-       if(prisoners[id].prisonerCell >=1 && prisoners[id].prisonerCell<=20)
-       {
-       	prisoners[id].prisonerBlock = A;
-	   }
-	   else {
-	   	if(prisoners[id].prisonerCell>20 && prisoners[id].prisonerCell<=30)
-	   	{
-  			prisoners[id].prisonerBlock = B;
-		   }
-	    else if(prisoners[id].prisonerCell>30 && prisoners[id].prisonerCell<=40)
-	    {
-	    	prisoners[id].prisonerBlock = C;
-		}
-		else{
-			prisoners[id].prisonerBlock = D;
-		}
-	   }
+        //getting name
+        string tempname;
+        while (true)
+        {
+		    cout<<"Enter name of the prisoner: ";
+            cin.ignore();
+            getline(cin,tempname);
+            if(stringcheck(tempname)==false){
+                cout<<"Name should not contain integers and should not be empty."<<endl;
+                continue;
+            }
+            else{
+                prisoners[tempid].name=tempname;
+                break;
+            }   
+        }
+
+        //getting Age
+        int tempage;
+        while (true)
+        {
+            cout<<"Enter age of the prisoner: ";
+            cin>>tempage;
+            if(intCheck()==false || tempage<1){
+                continue;
+            }else{
+                prisoners[tempid].age=tempage;
+                break;
+            }     
+        }
+
+        //what crime did he do
+        cout<<"What crime did Nigga do: ";
+        cin.ignore();
+        getline(cin,prisoners[tempid].crime);
+        
+        //date of arrest
+        cout<<"Date of Arrest (eg: 12 April 2025): ";
+        getline(cin,prisoners[tempid].dateOfArrest);
+        
+        //sentence
+        int tempSentence;
+        while (true)
+        {
+            cout<<"How many years is Nigga sentenced(only an integer): ";
+            cin>>tempSentence;
+            if(intCheck()==false || tempSentence<1){
+                continue;
+            }else{
+                prisoners[tempid].sentence=tempSentence;
+                break;
+            }
+        }
+        
+        //cell assignment
+        for(int i=1;i<=50;i++){
+            if(cells[i].setOccupant(tempid)==true){
+                prisoners[tempid].prisonerCell=i;
+                cout<<"Prisoner assigned to cell no: "<<i<<endl;
+                break;
+            }else{continue;}
+        }
+        //block  assignment (A=1-20 cells, B=20-30 cells, C=30-40 cells, D=40-50 cells)
+        if(prisoners[tempid].prisonerCell > 0 && prisoners[tempid].prisonerCell<=20){
+            prisoners[tempid].prisonerBlock=A;
+            cout<<"Prisoner sent to Block: A"<<endl;
+        }
+        else if(prisoners[tempid].prisonerCell > 20 && prisoners[tempid].prisonerCell<=30){
+            prisoners[tempid].prisonerBlock=B;
+            cout<<"Prisoner sent to Block: B"<<endl;
+        }
+        else if(prisoners[tempid].prisonerCell > 30 && prisoners[tempid].prisonerCell<=40){
+            prisoners[tempid].prisonerBlock=C;
+            cout<<"Prisoner sent to Block: C"<<endl;
+        }
+        else if(prisoners[tempid].prisonerCell > 40 && prisoners[tempid].prisonerCell<=50){
+            prisoners[tempid].prisonerBlock=D;
+            cout<<"Prisoner sent to Block: D"<<endl;
+        }
+        else{
+            cout<<"Error in block assignment."<<endl;
+        }
+        
+        //Add one to total no of prisoners
+        Prisoner::numOfPrisoners++; 
+        
+
+        
        
-        mainMenu();
+       
     }
     
     void releasePrisoner(){
@@ -269,6 +273,7 @@ class Prison{
                 if(isPrisonerIdTaken[tempId] == true){
                     isPrisonerIdTaken[tempId]=false;  //indicates this slot is empty now for any other prsioner to be added
                     cout<<"Prisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
+                    Prisoner::numOfPrisoners--; //remove one from total
                 }else{
                     cout<<"Sorry, A Prsioner with this Id doesnot exist.\nPress any key to tryagain or enter (back) to go back."<<endl;
                     string tempstr;
@@ -351,13 +356,14 @@ class Prison{
                 }
                 case 4: {
                     cout << "Update crime: ";
-                    cin >> prisoners[tempid].crime;
+                    cin.ignore();
+                    getline(cin,prisoners[tempid].crime);
                     cout << "Crime updated.\n";
                     break;
                 }
                 case 5: {
                     cout << "Update date of arrest(eg; 12 April 2022): ";
-                    cin >> prisoners[tempid].dateOfArrest;
+                    getline(cin,prisoners[tempid].dateOfArrest);
                     cout << "Date of arrest updated.\n";
                     break;
                 }
@@ -402,6 +408,9 @@ class Prison{
                         case 3:
                             cout<<"Block Allocated: C"<<endl;
                             break;
+                        case 4:
+                            cout<<"Block Allocated: D"<<endl;
+                            break;
                         default:
                             cout<<"Error"<<endl;
                             break;
@@ -431,10 +440,42 @@ class Prison{
                     }
                 }
                 else{
-                    if(cells[newcell].setOccupant(tempid)==false){
+                    if(cells[newcell].setOccupant(tempid)==false){ //means that cell is already full
                         continue;
                     }else{
+                        // first clear old cell
+                        int oldcell;
+                        oldcell = prisoners[tempid].prisonerCell;
+                        if(cells[oldcell].occupant1==tempid){
+                            cells[oldcell].occupant1=0;
+                        }
+                        else if(cells[oldcell].occupant2==tempid){
+                            cells[oldcell].occupant2=0;
+                        }
+
+                        //now transfer to new cell
                         prisoners[tempid].prisonerCell=newcell;
+
+                        //block  assignment (A=1-20 cells, B=20-30 cells, C=30-40 cells, D=40-50 cells)
+                        if(prisoners[tempid].prisonerCell > 0 && prisoners[tempid].prisonerCell<=20){
+                            prisoners[tempid].prisonerBlock=A;
+                            cout<<"Prisoner sent to Block: A"<<endl;
+                        }
+                        else if(prisoners[tempid].prisonerCell > 20 && prisoners[tempid].prisonerCell<=30){
+                            prisoners[tempid].prisonerBlock=B;
+                            cout<<"Prisoner sent to Block: B"<<endl;
+                        }
+                        else if(prisoners[tempid].prisonerCell > 30 && prisoners[tempid].prisonerCell<=40){
+                            prisoners[tempid].prisonerBlock=C;
+                            cout<<"Prisoner sent to Block: C"<<endl;
+                        }
+                        else if(prisoners[tempid].prisonerCell > 40 && prisoners[tempid].prisonerCell<=50){
+                            prisoners[tempid].prisonerBlock=D;
+                            cout<<"Prisoner sent to Block: D"<<endl;
+                        }
+                        else{
+                            cout<<"Error in block assignment."<<endl;
+                        }
                         break;
                     }
                 }
@@ -450,54 +491,98 @@ class Prison{
             if(newblock=="A" || newblock=="a"){
                 for(int i=1;i<=20;i++){
                     if(cells[i].setOccupant(tempid)==true){
-                        prisoners[tempid].prisonerCell==i;
+                        // first clear old cell
+                        int oldcell;
+                        oldcell = prisoners[tempid].prisonerCell;
+                        if(cells[oldcell].occupant1==tempid){
+                            cells[oldcell].occupant1=0;
+                        }
+                        else if(cells[oldcell].occupant2==tempid){
+                            cells[oldcell].occupant2=0;
+                        }
+                        //now assign new cell
+                        prisoners[tempid].prisonerCell=i;
                         prisoners[tempid].prisonerBlock=A;
                         cout<<"Prisoner transfered to Block A."<<endl;
+                        return;
                         break;
                     }else{
-                        cout<<"Block A is full. choose another."<<endl;
                         continue;
                     }
                 }
+                cout<<"Block A is full. choose another."<<endl;
             }
             else if(newblock=="B" || newblock=="b"){
                 for(int i=21;i<=30;i++){
                     if(cells[i].setOccupant(tempid)==true){
-                        prisoners[tempid].prisonerCell==i;
+                        // first clear old cell
+                        int oldcell;
+                        oldcell = prisoners[tempid].prisonerCell;
+                        if(cells[oldcell].occupant1==tempid){
+                            cells[oldcell].occupant1=0;
+                        }
+                        else if(cells[oldcell].occupant2==tempid){
+                            cells[oldcell].occupant2=0;
+                        }
+                        //now  assign new cell
+                        prisoners[tempid].prisonerCell=i;
                         prisoners[tempid].prisonerBlock=B;
                         cout<<"Prisoner transfered to Block B."<<endl;
+                        return;
                         break;
                     }else{
-                        cout<<"Block B is full. choose another."<<endl;
                         continue;
                     }
                 }
+                cout<<"Block B is full. choose another."<<endl;
             }
             else if(newblock=="C" || newblock=="c"){
                 for(int i=31;i<=40;i++){
                     if(cells[i].setOccupant(tempid)==true){
-                        prisoners[tempid].prisonerCell==i;
+                        // first clear old cell
+                        int oldcell;
+                        oldcell = prisoners[tempid].prisonerCell;
+                        if(cells[oldcell].occupant1==tempid){
+                            cells[oldcell].occupant1=0;
+                        }
+                        else if(cells[oldcell].occupant2==tempid){
+                            cells[oldcell].occupant2=0;
+                        }
+                        //now assign new cell
+                        prisoners[tempid].prisonerCell=i;
                         prisoners[tempid].prisonerBlock=C;
                         cout<<"Prisoner transfered to Block C."<<endl;
+                        return;
                         break;
                     }else{
-                        cout<<"Block C is full. choose another."<<endl;
                         continue;
                     }
                 }
+                cout<<"Block C is full. choose another."<<endl;
             }
             else if(newblock=="D" || newblock=="d"){
                 for(int i=41;i<=50;i++){
                     if(cells[i].setOccupant(tempid)==true){
-                        prisoners[tempid].prisonerCell==i;
+                        // first clear old cell
+                        int oldcell;
+                        oldcell = prisoners[tempid].prisonerCell;
+                        if(cells[oldcell].occupant1==tempid){
+                            cells[oldcell].occupant1=0;
+                        }
+                        else if(cells[oldcell].occupant2==tempid){
+                            cells[oldcell].occupant2=0;
+                        }
+                        //now assign new cell
+                        prisoners[tempid].prisonerCell=i;
                         prisoners[tempid].prisonerBlock=D;
                         cout<<"Prisoner transfered to Block D."<<endl;
+                        return;
                         break;
                     }else{
-                        cout<<"Block D is full. choose another."<<endl;
                         continue;
                     }
                 }
+                cout<<"Block D is full. choose another."<<endl;
             }
             else if(toLower(newblock)=="back"){
                 return;
@@ -640,10 +725,9 @@ class Prison{
             cin.ignore();
             getline(cin,tempname);
             cout<<"Enter the Date of visit: ";
-            cin.ignore();
             getline(cin,tempdate);
             while(true){
-                cout<<"Enter the visitor's iD: ";
+                cout<<"Enter the visitor's iD(in int): ";
                 cin>>visitortempid;
                 if(intCheck()==false){
                     continue;
@@ -664,7 +748,7 @@ class Prison{
             }
             delete[] prisoners[prisonerTempid].visitorHistory;
             prisoners[prisonerTempid].visitorHistory = temphistory;
-            delete[] temphistory;
+            
             prisoners[prisonerTempid].visitorHistory[newArraySize-1]= tempname+" {ID = "+to_string(visitortempid)+"} visited "+prisoners[prisonerTempid].name+" {relation = "+relation+"} on "+tempdate;
             cout<<"Thank you, visitor's information added."<<endl;
         }
@@ -690,15 +774,41 @@ int main(){
 bool intCheck()
 {
     
-    if (cin.fail())
+    if (cin.fail()) //if something other than integer has been entered;  cin.fail() gives true
     {
-        cin.clear();
-        cin.ignore(100, '\n');
+        cin.clear(); //delete the input
+        cin.ignore(100, '\n'); //ignore any characters left
         cout << ">>> Please Enter valid input <<<" << endl;
-        return false;
+        return false; 
     }
     else{
         return true;
     }
 }
 
+
+// converts a string with capital alphabets to lower alphabets
+string toLower(string s) {
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
+
+// checks if a name is valid or not (if name has integers then its invalid)
+bool stringcheck(string &value)
+{   
+    // Check if string is empty
+    if (value.empty())
+    {
+        return false;
+    }else{
+        // Check each character, if only one is integer, return false
+        for (char x : value)
+        {
+            if (isdigit(x))
+            {
+                return false;
+            }
+        } //if false not returned means name is valid, return true
+        return true;
+    }
+}
