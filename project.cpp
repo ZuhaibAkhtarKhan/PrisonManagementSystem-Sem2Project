@@ -104,7 +104,7 @@ class Prison{
                     // prisonerRecordManagement();
                     break;
                 case 2:
-                    // cellAndBlockAssignment();
+                    cellAndBlockAssignment();
                     break;
                 case 3:
                     // guardScheduleManagement();
@@ -113,7 +113,7 @@ class Prison{
                     visitorManagment();
                     break;
                 case 5:
-                    // searchPrisoner();
+                    searchPrisoner();
                     break;
                 case 6:
                     exit(0);
@@ -243,19 +243,18 @@ class Prison{
             cin>>tempId;
             if(intCheck() == false){   //this checks if other than integer type is enetered
                 cout<<"Enter only integers. "<<endl;
+                runAgain=true;
                 continue;
             }else{
-                for(int i=1;i<=100;i++){
-                    if(isPrisonerIdTaken[tempId] == true){
-                        isPrisonerIdTaken[tempId]=false;  //indicates this slot is empty now for any other prsioner to be added
-                        cout<<"Prisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
-                    }else{
-                        cout<<"Sorry, A Prsioner with this Id doesnot exist.\nPress any key to tryagain or enter (back) to go back."<<endl;
-                        string tempstr;
-                        cin>>tempstr;
-                        if(toLower(tempstr) == "back"){return;}
-                        else{continue;}
-                    }
+                if(isPrisonerIdTaken[tempId] == true){
+                    isPrisonerIdTaken[tempId]=false;  //indicates this slot is empty now for any other prsioner to be added
+                    cout<<"Prisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
+                }else{
+                    cout<<"Sorry, A Prsioner with this Id doesnot exist.\nPress any key to tryagain or enter (back) to go back."<<endl;
+                    string tempstr;
+                    cin>>tempstr;
+                    if(toLower(tempstr) == "back"){return;}
+                    else{runAgain=true;}
                 }
             }
         }while(runAgain);
@@ -356,6 +355,7 @@ void modifyPrisonerData(){
             cin>>tempId;
             if(intCheck()==false){
                 cout<<"Invalid ID entered, please try only integers. "<<endl;
+                runAgain=true;
                 continue;
             }else{
                 if(isPrisonerIdTaken[tempId]==true){
@@ -386,19 +386,166 @@ void modifyPrisonerData(){
                     string tempstr;
                     cin>>tempstr;
                     if(toLower(tempstr) == "back"){return;}
-                    else{continue;}
+                    else{runAgain=true;}
                 }
             }
         }while(runAgain);
     }
 
+    void changeCell(int tempid){
+        int newcell;
+            while (true)
+            {
+                cout<<"Enter new cell(or enter 0 to go  back): ";
+                cin>>newcell;
+                if(intCheck()==false || newcell<1 || newcell>50){
+                    if(newcell==0){
+                        return;
+                    }else{
+                        continue;
+                    }
+                }
+                else{
+                    if(cells[newcell].setOccupant(tempid)==false){
+                        continue;
+                    }else{
+                        prisoners[tempid].prisonerCell=newcell;
+                        break;
+                    }
+                }
+            }
+    }
+
+    void changeBlock(int tempid){
+        string newblock;
+        while (true)
+        {
+            cout<<"Enter new block(A,B,C,D) or enter (back) to go back: ";
+            cin>>newblock;
+            if(newblock=="A" || newblock=="a"){
+                for(int i=1;i<=20;i++){
+                    if(cells[i].setOccupant(tempid)==true){
+                        prisoners[tempid].prisonerCell==i;
+                        prisoners[tempid].prisonerBlock=A;
+                        cout<<"Prisoner transfered to Block A."<<endl;
+                        break;
+                    }else{
+                        cout<<"Block A is full. choose another."<<endl;
+                        continue;
+                    }
+                }
+            }
+            else if(newblock=="B" || newblock=="b"){
+                for(int i=21;i<=30;i++){
+                    if(cells[i].setOccupant(tempid)==true){
+                        prisoners[tempid].prisonerCell==i;
+                        prisoners[tempid].prisonerBlock=B;
+                        cout<<"Prisoner transfered to Block B."<<endl;
+                        break;
+                    }else{
+                        cout<<"Block B is full. choose another."<<endl;
+                        continue;
+                    }
+                }
+            }
+            else if(newblock=="C" || newblock=="c"){
+                for(int i=31;i<=40;i++){
+                    if(cells[i].setOccupant(tempid)==true){
+                        prisoners[tempid].prisonerCell==i;
+                        prisoners[tempid].prisonerBlock=C;
+                        cout<<"Prisoner transfered to Block C."<<endl;
+                        break;
+                    }else{
+                        cout<<"Block C is full. choose another."<<endl;
+                        continue;
+                    }
+                }
+            }
+            else if(newblock=="D" || newblock=="d"){
+                for(int i=41;i<=50;i++){
+                    if(cells[i].setOccupant(tempid)==true){
+                        prisoners[tempid].prisonerCell==i;
+                        prisoners[tempid].prisonerBlock=D;
+                        cout<<"Prisoner transfered to Block D."<<endl;
+                        break;
+                    }else{
+                        cout<<"Block D is full. choose another."<<endl;
+                        continue;
+                    }
+                }
+            }
+            else if(toLower(newblock)=="back"){
+                return;
+            }
+            else{
+                cout<<"Invalid input."<<endl;
+                continue;
+            }
+        }
+        
+    }
+
     void cellAndBlockAssignment(){
-        //ask for prisoner id
-        //print his cell and block
-        //ask if user wanna change cell or  block
-        //if user wanna change cell ask for which cell(1-50) then check if its empty or not by calling setOccupant(id), if empty then set the prisoner onto that and change the block accordingly
-        //if user wanna change block instead, then ask which block(A,B,C or D) and then check the cells in that block, and add the rpsioner into any empty cell, if block is full ask for another block
-        //retturn to mainmenu by calling mainmenu()
+        int tempid;
+        while (true)
+        {
+            cout<<"Enter prisoner's ID(1-100) or enter 0 to go back: ";
+            cin>>tempid;
+            if(intCheck()==false || tempid<1 || tempid>100 || isPrisonerIdTaken[tempid]==false){
+                if(tempid==0){
+                    return;
+                }else{
+                    if(isPrisonerIdTaken[tempid]==false){
+                        cout<<"Prisoner with that ID doesnot exist."<<endl;
+                    }
+                    continue;
+                }
+            }
+            else{break;}
+        }
+        cout<<"Prsioner's current cell: "<<prisoners[tempid].prisonerCell<<endl;
+        switch(prisoners[tempid].prisonerBlock){
+            case 1:
+                cout<<"Prisoner's current block: A"<<endl;
+                break;
+            case 2:
+                cout<<"Prisoner's current block: B"<<endl;
+                break;
+            case 3:
+                cout<<"Prisoner's current block: C"<<endl;
+                break;
+            case 4:
+                cout<<"Prisoner's current block: D"<<endl;
+                break;
+            default:
+                cout<<"default error"<<endl;
+                break;
+        }
+        int tempoption;
+        while (true)
+        {
+            cout<<"1.Change Cell.\n2.Change Block.\n3.Go back.\nchoose(1-3): ";
+            cin>>tempoption;
+            if(intCheck()==false || tempoption<1 || tempoption>3){
+                continue;
+            }else{break;}
+        }
+        switch (tempoption)
+        {
+        case 1:
+            changeCell(tempid);
+            break;
+        case 2:
+            changeBlock(tempid);
+            break;
+        case 3:
+            return;
+            break;
+        
+        default:
+            cout<<"default error."<<endl;
+            break;
+        }  
     }
 
 
@@ -410,7 +557,7 @@ void modifyPrisonerData(){
         while(true){
             cout<<"Enter option(1-3): ";
             cin>>tempoption;
-            if(intCheck()==false || tempoption<1 && tempoption>3){
+            if(intCheck()==false || tempoption<1 || tempoption>3){
                 continue;
             }else{break;}
         }
@@ -436,7 +583,7 @@ void modifyPrisonerData(){
         while(true){
             cout<<"Enter ID of prisoner(1-100): ";
             cin>>tempid;
-            if(intCheck()==false || tempid<1 && tempid>100){
+            if(intCheck()==false || tempid<1 || tempid>100){
                 continue;
             }else{break;}
         }
@@ -454,7 +601,7 @@ void modifyPrisonerData(){
         while (true){
             cout<<"Enter the prisoner's ID (the one who met the visitor): ";
             cin>>prisonerTempid;
-            if(intCheck()==false || prisonerTempid<1 && prisonerTempid>100){
+            if(intCheck()==false || prisonerTempid<1 || prisonerTempid>100){
                 continue;
             }else{break;}
         }
