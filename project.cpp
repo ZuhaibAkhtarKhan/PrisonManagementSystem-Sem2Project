@@ -77,7 +77,7 @@ class Prison{
     public:
     void mainMenu(){
             do{
-                cout<<"\t\tWELCOME TO AZKABAN PRISON"<<endl;
+                cout<<"\t\tWELCOME TO |||| A Z K A B A N |||| (From Where Escape is Impossible)"<<endl;
                 cout<<"Total prisoners: "<<Prisoner::numOfPrisoners<<endl;
                 cout<<"Total Guards: "<<endl;
                 cout<<"Choose Action(1 to 6): "<<endl;
@@ -199,7 +199,7 @@ class Prison{
         }
 
         //what crime did he do
-        cout<<"What crime did Nigga do: ";
+        cout<<"What crime did Nigga do? ";
         cin.ignore();
         getline(cin,prisoners[tempid].crime);
         
@@ -211,7 +211,7 @@ class Prison{
         int tempSentence;
         while (true)
         {
-            cout<<"How many years is Nigga sentenced(only an integer): ";
+            cout<<"How many years is Nigga sentenced(only an integer)? ";
             cin>>tempSentence;
             if(intCheck()==false || tempSentence<1){
                 continue;
