@@ -69,11 +69,81 @@ int Prisoner::numOfPrisoners = 0; //initialise total number of prisoners with 0
 
 
 
+//guards section
+class Staff{
+    friend class Prison;
+    protected:
+    int id;
+    string name;
+    public:
+    Block block;
+    virtual void performDuty(){};
+};
+class Officer:public Staff{
+    public:
+    friend class Prison; //give access to Prison class
+    static int noOfOfficers;
+    void performDuty() override{
+        cout<<"Officer "<<name<<" {Id = "<<id<<"} is currently working in his office at block: ";
+        switch (block)
+        {
+        case 1:
+            cout<<"A\n";
+            break;
+        case 2:
+            cout<<"B\n";
+            break;
+        case 3:
+            cout<<"C\n";
+            break;
+        case 4:
+            cout<<"D\n";
+            break;
+        
+        default:
+            cout<<"error at block"<<endl;
+            break;
+        }
+    }
+};
+int Officer::noOfOfficers=0;
+
+class Guard:public Staff{
+    public:
+    friend class Prison; //give access to Prison class
+    static int noOfGuards;
+    void performDuty() override{
+        cout<<"Guard "<<name<<" {Id = "<<id<<"} is currently patrolling at block: ";
+        switch (block)
+        {
+        case 1:
+            cout<<"A\n";
+            break;
+        case 2:
+            cout<<"B\n";
+            break;
+        case 3:
+            cout<<"C\n";
+            break;
+        case 4:
+            cout<<"D\n";
+            break;
+        
+        default:
+            cout<<"error at block"<<endl;
+            break;
+        }
+    }
+};
+int Guard::noOfGuards=0;
+
+
 class Prison{
     bool isPrisonerIdTaken[101]={false}; //set the value to true at index equal to id of prisoner when a prisoner is being added
     Prisoner prisoners[101];  //ignore index 0, and we can accomodate 100 prisoner
     Cell cells[51]; //we can go from 1 to 50(ignore 0) and can accomodate 100 prisoner
-
+    Guard guards[20];
+    Officer officers[10];
     public:
     void mainMenu(){
             do{
@@ -94,7 +164,7 @@ class Prison{
                     cellAndBlockAssignment();
                     break;
                 case 3:
-                    // guardScheduleManagement();
+                    guardManagement();
                     break;
                 case 4:
                     visitorManagment();
@@ -758,6 +828,177 @@ class Prison{
         
     
     }
+
+    void guardManagement(){
+        int temOption;
+        while (true)
+        {
+            cout<<"\n\nWelcome to Staff and Guards."<<endl;
+            cout<<"1.Add Officer.\n2.Add Guard.\n3.See Officer list.\n4.See guards list.\n5.Go back."<<endl;
+            cout<<"Choose (1-5): ";
+            cin>>temOption;
+            if(intCheck()==false || temOption<1 || temOption>5){
+                continue;
+            }else{
+                switch (temOption)
+                {
+                case 1:
+                    cout<<endl;
+                    addOfficer();
+                    break;
+                
+                case 2:
+                    cout<<endl;
+                    addGuard();
+                    break;
+                
+                case 3:
+                    cout<<endl;
+                    for(int i=0;i<Officer::noOfOfficers;i++){
+                        officers[i].performDuty();
+                    }
+                    break;
+                
+                case 4:
+                    cout<<endl;
+                    for(int i=0;i<Guard::noOfGuards;i++){
+                        guards[i].performDuty();
+                    }
+                    break;
+                case 5:
+                    return;
+                    break;
+                default:
+                cout<<"default error"<<endl;
+                    break;
+                }
+            }
+        }
+          
+    }
+    void addOfficer(){
+        //name input
+        string tempname;
+        while (true)
+        {
+		    cout<<"Enter name of the Officer: ";
+            cin.ignore();
+            getline(cin,tempname);
+            if(stringcheck(tempname)==false){
+                cout<<"Name should not contain integers and should not be empty."<<endl;
+                continue;
+            }
+            else{
+                officers[Officer::noOfOfficers].name=tempname;
+                break;
+            }   
+        }
+        //id input
+        int tempid;
+        while (true)
+        {
+            cout<<"Enter id: ";
+            cin>>tempid;
+            if(intCheck()==false){
+                continue;
+            }else{
+                officers[Officer::noOfOfficers].id=tempid;
+                break;
+            }
+        }
+        //block assignment
+        string tempBlock;
+        while (true)
+        {
+            cout<<"Assign Block (A, B, C, D): ";
+            cin.ignore();
+            getline(cin,tempBlock);
+            if(toLower(tempBlock)=="a"){
+                officers[Officer::noOfOfficers].block=A;
+                break;
+            }
+            else if(toLower(tempBlock)=="b"){
+                officers[Officer::noOfOfficers].block=B;
+                break;
+            }
+            else if(toLower(tempBlock)=="c"){
+                officers[Officer::noOfOfficers].block=C;
+                break;
+            }
+            else if(toLower(tempBlock)=="d"){
+                officers[Officer::noOfOfficers].block=D;
+                break;
+            }
+            else{
+                cout<<"Invalid input."<<endl;
+                continue;
+            }
+
+        }
+        Officer::noOfOfficers++;  
+    }
+    void addGuard(){
+        //name input
+        string tempname;
+        while (true)
+        {
+		    cout<<"Enter name of the Guard: ";
+            cin.ignore();
+            getline(cin,tempname);
+            if(stringcheck(tempname)==false){
+                cout<<"Name should not contain integers and should not be empty."<<endl;
+                continue;
+            }
+            else{
+                guards[Guard::noOfGuards].name=tempname;
+                break;
+            }   
+        }
+        //id input
+        int tempid;
+        while (true)
+        {
+            cout<<"Enter id: ";
+            cin>>tempid;
+            if(intCheck()==false){
+                continue;
+            }else{
+                guards[Guard::noOfGuards].id=tempid;
+                break;
+            }
+        }
+        //block assignment
+        string tempBlock;
+        while (true)
+        {
+            cout<<"Assign Block (A, B, C, D): ";
+            cin.ignore();
+            getline(cin,tempBlock);
+            if(toLower(tempBlock)=="a"){
+                guards[Guard::noOfGuards].block=A;
+                break;
+            }
+            else if(toLower(tempBlock)=="b"){
+                guards[Guard::noOfGuards].block=B;
+                break;
+            }
+            else if(toLower(tempBlock)=="c"){
+                guards[Guard::noOfGuards].block=C;
+                break;
+            }
+            else if(toLower(tempBlock)=="d"){
+                guards[Guard::noOfGuards].block=D;
+                break;
+            }
+            else{
+                cout<<"Invalid input."<<endl;
+                continue;
+            }
+
+        }
+        Guard::noOfGuards++; 
+    }
+    
 };
 
 
