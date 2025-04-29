@@ -70,11 +70,8 @@ int Prisoner::numOfPrisoners = 0; //initialise total number of prisoners with 0
 
 
 //guards section
-class Staff{
+class Staff:public Person{
     friend class Prison;
-    protected:
-    int id;
-    string name;
     public:
     Block block;
     virtual void performDuty(){};
@@ -147,10 +144,11 @@ class Prison{
     public:
     void mainMenu(){
             do{
-                cout<<"\t\tWELCOME TO |||| A Z K A B A N |||| (From Where Escape is Impossible)"<<endl;
+                cout<<"\n\n\t\tWELCOME TO |||| A Z K A B A N |||| (From Where Escape is Impossible)"<<endl;
                 cout<<"Total prisoners: "<<Prisoner::numOfPrisoners<<endl;
-                cout<<"Total Guards: "<<endl;
-                cout<<"Choose Action(1 to 6): "<<endl;
+                cout<<"Total Guards: "<<Guard::noOfGuards<<endl;
+                cout<<"Total Officers: "<<Officer::noOfOfficers<<endl;
+                cout<<"\nChoose Action(1 to 6): "<<endl;
                 cout<<"1.Prisoner record management\n2.Cell and Block Assignment\n3.Guard Schedule management\n4.Visitor management\n5.Search Prisoner By ID\n6.Exit"<<endl;
                 int option;
                 cin>>option;
@@ -190,7 +188,7 @@ class Prison{
         int tempotion;
         while (true)
         {  
-            cout<<"Choose one option"<<endl;
+            cout<<"\n\nChoose one option"<<endl;
             cout<<"1.Add prisoner\n2.Release prisoner\n3.Modify Prisoner Data\n4.Search prisoner\n5.Go back"<<endl;
             cin>>tempotion;
             switch(tempotion){
@@ -239,10 +237,10 @@ class Prison{
 
         //getting name
         string tempname;
+        cin.ignore();
         while (true)
         {
 		    cout<<"Enter name of the prisoner: ";
-            cin.ignore();
             getline(cin,tempname);
             if(stringcheck(tempname)==false){
                 cout<<"Name should not contain integers and should not be empty."<<endl;
@@ -323,7 +321,7 @@ class Prison{
         //Add one to total no of prisoners
         Prisoner::numOfPrisoners++; 
         
-
+        cout<<endl;
         
        
        
@@ -342,7 +340,7 @@ class Prison{
             }else{
                 if(isPrisonerIdTaken[tempId] == true){
                     isPrisonerIdTaken[tempId]=false;  //indicates this slot is empty now for any other prsioner to be added
-                    cout<<"Prisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
+                    cout<<"\nPrisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
                     Prisoner::numOfPrisoners--; //remove one from total
                 }else{
                     cout<<"Sorry, A Prsioner with this Id doesnot exist.\nPress any key to tryagain or enter (back) to go back."<<endl;
@@ -352,6 +350,7 @@ class Prison{
                     else{runAgain=true;}
                 }
             }
+            
         }while(runAgain);
     }
     void modifyPrisonerData(){
@@ -460,7 +459,7 @@ class Prison{
                 continue;
             }else{
                 if(isPrisonerIdTaken[tempId]==true){
-                    cout<<"PRISONER FOUND"<<endl;
+                    cout<<"\n\nPRISONER FOUND"<<endl;
                     cout<<"Name: "<<prisoners[tempId].name<<endl;
                     cout<<"ID: "<<prisoners[tempId].id<<endl;
                     cout<<"Age: "<<prisoners[tempId].age<<endl;
@@ -486,7 +485,7 @@ class Prison{
                             break;
                     }
                 }else{
-                    cout<<"A prisoner with ID: "<<tempId<<" doesnot exist.\npress any key to tryAgain OR enter (back) to go back"<<endl;
+                    cout<<"\nA prisoner with ID: "<<tempId<<" doesnot exist.\npress any key to tryAgain OR enter (back) to go back"<<endl;
                     string tempstr;
                     cin>>tempstr;
                     if(toLower(tempstr) == "back"){return;}
@@ -730,7 +729,7 @@ class Prison{
 
 
     void visitorManagment(){
-        cout<<"Welcome to Visitor Management: "<<endl;
+        cout<<"\n\nWelcome to Visitor Management: "<<endl;
         cout<<"1.See visits history.\n2.Add new visitor's info.\n3.Go back."<<endl;
         int tempoption;
         //input validation
@@ -879,10 +878,10 @@ class Prison{
     void addOfficer(){
         //name input
         string tempname;
+        cin.ignore();
         while (true)
         {
 		    cout<<"Enter name of the Officer: ";
-            cin.ignore();
             getline(cin,tempname);
             if(stringcheck(tempname)==false){
                 cout<<"Name should not contain integers and should not be empty."<<endl;
@@ -908,10 +907,10 @@ class Prison{
         }
         //block assignment
         string tempBlock;
+        cin.ignore();
         while (true)
         {
             cout<<"Assign Block (A, B, C, D): ";
-            cin.ignore();
             getline(cin,tempBlock);
             if(toLower(tempBlock)=="a"){
                 officers[Officer::noOfOfficers].block=A;
@@ -940,10 +939,10 @@ class Prison{
     void addGuard(){
         //name input
         string tempname;
+        cin.ignore();
         while (true)
         {
 		    cout<<"Enter name of the Guard: ";
-            cin.ignore();
             getline(cin,tempname);
             if(stringcheck(tempname)==false){
                 cout<<"Name should not contain integers and should not be empty."<<endl;
@@ -969,10 +968,10 @@ class Prison{
         }
         //block assignment
         string tempBlock;
+        cin.ignore();
         while (true)
         {
             cout<<"Assign Block (A, B, C, D): ";
-            cin.ignore();
             getline(cin,tempBlock);
             if(toLower(tempBlock)=="a"){
                 guards[Guard::noOfGuards].block=A;
