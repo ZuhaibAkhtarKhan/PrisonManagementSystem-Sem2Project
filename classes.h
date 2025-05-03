@@ -85,7 +85,7 @@ class Staff:public Person{
     friend class Prison;
     public:
     Block block;
-    virtual void performDuty(){};
+    virtual void performDuty()=0;
 };
 
 
@@ -178,11 +178,14 @@ class Prison{
 
 void Prison::mainMenu(){
     do{
-        cout<<"\n\n\t\tWELCOME TO |||| A Z K A B A N |||| (From Where Escape is Impossible)"<<endl;
+        cout<<"\n\n==============================================================================="<<endl;
+        cout<<"\tWELCOME TO |||| A Z K A B A N |||| (From Where Escape is Impossible)"<<endl;
+        cout<<"==============================================================================="<<endl;
         cout<<"Total prisoners: "<<Prisoner::numOfPrisoners<<endl;
         cout<<"Total Guards: "<<Guard::noOfGuards<<endl;
         cout<<"Total Officers: "<<Officer::noOfOfficers<<endl;
-        cout<<"\nChoose Action(1 to 6): "<<endl;
+        cout<<"==============================="<<endl;
+        cout<<"Choose Action(1 to 6): "<<endl;
         cout<<"1.Prisoner record management\n2.Cell and Block Assignment\n3.Guard Schedule management\n4.Visitor management\n5.Search Prisoner By ID\n6.Exit"<<endl;
         int option;
         cin>>option;
@@ -223,7 +226,10 @@ void Prison::prisonerRecordManagement(){
     int tempotion;
     while (true)
     {  
-        cout<<"\n\nChoose one option"<<endl;
+        cout<<"\n================================================"<<endl;
+        cout<<"\tPrisoner Record Management"<<endl;
+        cout<<"================================================"<<endl;
+        cout<<"Choose one option"<<endl;
         cout<<"1.Add prisoner\n2.Release prisoner\n3.Modify Prisoner Data\n4.Search prisoner\n5.Go back"<<endl;
         cin>>tempotion;
         switch(tempotion){
@@ -304,7 +310,7 @@ void Prison::addPrisoner(){
     }
 
     //what crime did he do
-    cout<<"What crime did Nigga do? ";
+    cout<<"What crime did Prisoner do? ";
     cin.ignore();
     getline(cin,prisoners[tempid].crime);
         
@@ -316,7 +322,7 @@ void Prison::addPrisoner(){
     int tempSentence;
     while (true)
     {
-        cout<<"How many years is Nigga sentenced(only an integer)? ";
+        cout<<"How many years is Prisoner sentenced(only an integer)? ";
         cin>>tempSentence;
         if(intCheck()==false || tempSentence<1){
             continue;
@@ -358,7 +364,7 @@ void Prison::addPrisoner(){
     //Add one to total no of prisoners
     Prisoner::numOfPrisoners++; 
     
-    cout<<endl;
+    cout<<"=============================="<<endl;
     
     
     
@@ -378,8 +384,18 @@ void Prison::releasePrisoner(){
         }else{
             if(isPrisonerIdTaken[tempId] == true){
                 isPrisonerIdTaken[tempId]=false;  //indicates this slot is empty now for any other prsioner to be added
-                cout<<"\nPrisoner (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
+                cout<<"\nPrisoner "<<prisoners[tempId].name<<" (ID = "<<prisoners[tempId].id<<") has been released. "<<endl;
                 Prisoner::numOfPrisoners--; //remove one from total
+                prisoners[tempId].visits=0; //change visits to zero now
+                delete[] prisoners[tempId].visitorHistory; //delete old visitorHistory which is an array of string
+                prisoners[tempId].visitorHistory = new string[0]; //initiate a new array with size 0
+                //empty the prisoner's cell
+                if(cells[prisoners[tempId].prisonerCell].occupant1 == tempId){
+                    cells[prisoners[tempId].prisonerCell].occupant1=0;
+                }else if(cells[prisoners[tempId].prisonerCell].occupant2 == tempId){
+                    cells[prisoners[tempId].prisonerCell].occupant2=0;
+                }else{cout<<"error in emptying cell"<<endl;}
+                
             }else{
                 cout<<"Sorry, A Prsioner with this Id doesnot exist.\nPress any key to tryagain or enter (back) to go back."<<endl;
                 string tempstr;
@@ -500,7 +516,8 @@ void Prison::searchPrisoner(){
             continue;
         }else{
             if(isPrisonerIdTaken[tempId]==true){
-                cout<<"\n\nPRISONER FOUND"<<endl;
+                cout<<"\n========================================="<<endl;
+                cout<<"\tPRISONER FOUND"<<endl;
                 cout<<"Name: "<<prisoners[tempId].name<<endl;
                 cout<<"ID: "<<prisoners[tempId].id<<endl;
                 cout<<"Age: "<<prisoners[tempId].age<<endl;
@@ -525,6 +542,7 @@ void Prison::searchPrisoner(){
                         cout<<"Error"<<endl;
                         break;
                 }
+                cout<<"========================================="<<endl;
             }else{
                 cout<<"\nA prisoner with ID: "<<tempId<<" doesnot exist.\npress any key to tryAgain OR enter (back) to go back"<<endl;
                 string tempstr;
@@ -770,7 +788,9 @@ void Prison::cellAndBlockAssignment(){
 
 
 void Prison::visitorManagment(){
-    cout<<"\n\nWelcome to Visitor Management: "<<endl;
+    cout<<"\n=============================================="<<endl;
+    cout<<"\tWelcome to Visitor Management: "<<endl;
+    cout<<"=============================================="<<endl;
     cout<<"1.See visits history.\n2.Add new visitor's info.\n3.Go back."<<endl;
     int tempoption;
     //input validation
@@ -848,17 +868,17 @@ void Prison::addVisitorInfo(){
         cin.ignore();
         getline(cin,relation);
 
-        //storing visiotr's data
-        prisoners[prisonerTempid].visits++;
+        //storing visiotr's data and expanding array size dynamically
+        prisoners[prisonerTempid].visits++; 
         int newArraySize = prisoners[prisonerTempid].visits;
-        string *temphistory = new string[newArraySize];
+        string *temphistory = new string[newArraySize]; //create new array with expanded size
         for(int i=0;i<newArraySize-1;i++){
-            temphistory[i] = prisoners[prisonerTempid].visitorHistory[i];
+            temphistory[i] = prisoners[prisonerTempid].visitorHistory[i];  //transfer old info to new larger array
 
         }
-        delete[] prisoners[prisonerTempid].visitorHistory;
-        prisoners[prisonerTempid].visitorHistory = temphistory;
-        
+        delete[] prisoners[prisonerTempid].visitorHistory;  //delete old array
+        prisoners[prisonerTempid].visitorHistory = temphistory;  //assign new array to old pointer
+        // add visitors info at the new last index as string
         prisoners[prisonerTempid].visitorHistory[newArraySize-1]= tempname+" {ID = "+to_string(visitortempid)+"} visited "+prisoners[prisonerTempid].name+" {relation = "+relation+"} on "+tempdate;
         cout<<"Thank you, visitor's information added."<<endl;
     }
@@ -873,7 +893,9 @@ void Prison::guardManagement(){
     int temOption;
     while (true)
     {
-        cout<<"\n\nWelcome to Staff and Guards."<<endl;
+        cout<<"\n=============================================="<<endl;
+        cout<<"\tWelcome to Staff and Guards."<<endl;
+        cout<<"=============================================="<<endl;
         cout<<"1.Add Officer.\n2.Add Guard.\n3.See Officer list.\n4.See guards list.\n5.Go back."<<endl;
         cout<<"Choose (1-5): ";
         cin>>temOption;
