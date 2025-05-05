@@ -8,8 +8,6 @@ int main(){
     Prison prison;
     prison.mainMenu();   //starts from here and then goes from function to function
 
-
-    
     return 0;
 }
 
@@ -90,7 +88,9 @@ void Prison::mainMenu(){
             break;
         case 6:
             for(int i=1;i<=100;i++){ //release the dynamically allocated memory
-                delete[] prisoners[i].visitorHistory;
+                if(isPrisonerIdTaken[i]==true){
+                    delete[] prisoners[i].visitorHistory;
+                }
             }
             exit(0); //end whole program
             break;
@@ -102,6 +102,7 @@ void Prison::mainMenu(){
     }while(true);
 
 }
+
 
 void Prison::prisonerRecordManagement(){
     int tempotion;
@@ -369,6 +370,7 @@ void Prison::modifyPrisonerData(){
             }
             case 5: {
                 cout << "Update date of arrest(eg; 12 April 2022): ";
+                cin.ignore();
                 getline(cin,prisoners[tempid].dateOfArrest);
                 cout << "Date of arrest updated.\n";
                 break;
@@ -435,11 +437,12 @@ void Prison::searchPrisoner(){
     }while(runAgain);
 }
 
+
 void Prison::changeCell(int tempid){
     int newcell;
     while (true)
     {
-        cout<<"Enter new cell(or enter 0 to go  back): ";
+        cout<<"Enter new cell (1-50) or enter 0 to go  back: ";
         cin>>newcell;
         if(intCheck()==false || newcell<1 || newcell>50){
             if(newcell==0){
@@ -452,11 +455,11 @@ void Prison::changeCell(int tempid){
             if(cells[newcell].setOccupant(tempid)==false){ //means that cell is already full
                 continue;
             }else{
-                // first clear old cell
+                // first clear old cell,each cell has two occupant
                 int oldcell;
                 oldcell = prisoners[tempid].prisonerCell;
-                if(cells[oldcell].occupant1==tempid){
-                    cells[oldcell].occupant1=0;
+                if(cells[oldcell].occupant1==tempid){  //when we assign a specific cell to a prisoner, we assign his id to one of the empty occupant
+                    cells[oldcell].occupant1=0;     //zero indicates empty bed in cell, if equal to id then its occupied by that id
                 }
                 else if(cells[oldcell].occupant2==tempid){
                     cells[oldcell].occupant2=0;
@@ -490,6 +493,7 @@ void Prison::changeCell(int tempid){
         }
     }
 }
+
 
 void Prison::changeBlock(int tempid){
     string newblock;
@@ -604,6 +608,7 @@ void Prison::changeBlock(int tempid){
 
 }
 
+
 void Prison::cellAndBlockAssignment(){
     int tempid;
     while (true)
@@ -699,6 +704,8 @@ void Prison::visitorManagment(){
     }
 
 }
+
+
 void Prison::showVisitorHistory(){
     int tempid;
     while(true){
@@ -710,13 +717,15 @@ void Prison::showVisitorHistory(){
     }
     if(isPrisonerIdTaken[tempid]==true){
         for(int i=0;i<prisoners[tempid].visits;i++){
-        cout<<prisoners[tempid].visitorHistory[i]<<endl;
+            cout<<prisoners[tempid].visitorHistory[i]<<endl;
         }
     }else{
         cout<<"SORRY, Prisoner with that ID doesnot Exist."<<endl;
     }
 
 }
+
+
 void Prison::addVisitorInfo(){
     int prisonerTempid;
     while (true){
@@ -770,6 +779,7 @@ void Prison::addVisitorInfo(){
 
 }
 
+
 void Prison::guardManagement(){
     int temOption;
     while (true)
@@ -819,6 +829,8 @@ void Prison::guardManagement(){
     }
     
 }
+
+
 void Prison::addOfficer(){
     //name input
     string tempname;
@@ -880,6 +892,8 @@ void Prison::addOfficer(){
     }
     Officer::noOfOfficers++;  
 }
+
+
 void Prison::addGuard(){
     //name input
     string tempname;

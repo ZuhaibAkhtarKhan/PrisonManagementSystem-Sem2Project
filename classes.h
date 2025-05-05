@@ -10,6 +10,7 @@ string toLower(string s); //converts capital to lower
 bool stringcheck(string &value); // checks if a name is valid or not (if name has integers then its invalid)
 
 
+
 class Person{
     public:
     string name;
@@ -18,7 +19,6 @@ class Person{
     int id;
     
 };
-
 
 
 
